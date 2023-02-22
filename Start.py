@@ -1,45 +1,30 @@
-import requests
 import datetime
-import sys
-import ClassAlerte
+from ClassURL import ClassURL
+import requests
 
-# script de check de code html
+dateTimeNow = datetime.datetime.now()
+
+# Initialisation de l'objet ClassURL
 siteToRequest = input("Entrez le site que vous souhaitez tester : ")
 urlCompleted = "http://" + siteToRequest
-print("Vous souhaitez tester le site : " + urlCompleted)
+objectURL = ClassURL(urlCompleted)
 
-try:
-    
-    urlRedirect = requests.get(urlCompleted, allow_redirects=True)
-    if urlRedirect.history:
-        print("La requete a ete redirigee.")
-        for r in urlRedirect.history:
-            print("Code retour : " + str(r.status_code))
-        print("La nouvelle destination est :", urlRedirect.url)
-        urlToVerify = requests.head(str(urlRedirect.url))
-    else:
-        print("La requete n'a pas ete redirigee.")
-        urlToVerify = requests.head(urlCompleted)
+# Vérification de l'existence de l'URL
+urlVerified = objectURL.testUrlValid()
 
-except Exception as error:
-    print("Erreur lors de la verification de : " + urlCompleted + " => ", error)
-    print("L'url donnee est invalide !")
-    sys.exit(1)
+if urlVerified:
+    # Ecriture dans le log resultURL.log
+    logURL = "Results\\resultURL.log"
+    with open(logURL, 'a') as f:
+        if f.tell() != 0:  # Vérifie si le fichier n'est pas vide
+            f.write("\n")
+        f.write(str(dateTimeNow) + " | Code retour du site : " + urlVerified.url + " = " + str(urlVerified.status_code))
 
-print("Teste du site : " + urlToVerify.url)
-
-maintenant = datetime.datetime.now()
-
-with open("Results\\result.txt", 'a') as f:
-    f.write("\n" + str(maintenant) + " | Code retour du site : " + urlToVerify.url + " : " + str(urlToVerify.status_code))
-
-alerte = ClassAlerte()
-if alerte.getAlerte(urlToVerify) == 200:
-
-    urlVerified = requests.get(urlToVerify.url)
-    with open("Results\\result.txt", 'a') as f:
-        f.write("\nCode retour OK")
-
-else : 
-    with open("Results\\result.txt", 'a') as f:
-        f.write("\nCode retour KO")
+    if urlVerified.status_code == 200:
+        with open(logURL, 'a') as f:
+            f.write(" | Code retour OK")
+    else: 
+        with open(logURL, 'a') as f:
+            f.write(" | Code retour KO")
+else:
+    print("Impossible de vérifier l'URL.")
