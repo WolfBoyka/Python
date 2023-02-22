@@ -1,3 +1,5 @@
 
 2023-02-21 23:48:05.154861 | Code retour du site : https://www.google.com/ : 200
 Code retour OK
+2023-02-22 14:11:28.931318 | Code retour du site : https://lapin.com/ : 200
+Code retour OK

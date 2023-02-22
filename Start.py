@@ -1,8 +1,7 @@
 import requests
 import datetime
 import sys
-
-from Alerte import Alerte
+import ClassAlerte
 
 # script de check de code html
 siteToRequest = input("Entrez le site que vous souhaitez tester : ")
@@ -31,16 +30,16 @@ print("Teste du site : " + urlToVerify.url)
 
 maintenant = datetime.datetime.now()
 
-with open("Script_html_check_code_results\\result.txt", 'a') as f:
+with open("Results\\result.txt", 'a') as f:
     f.write("\n" + str(maintenant) + " | Code retour du site : " + urlToVerify.url + " : " + str(urlToVerify.status_code))
 
-alerte = Alerte()
+alerte = ClassAlerte()
 if alerte.getAlerte(urlToVerify) == 200:
 
     urlVerified = requests.get(urlToVerify.url)
-    with open("Script_html_check_code_results\\result.txt", 'a') as f:
+    with open("Results\\result.txt", 'a') as f:
         f.write("\nCode retour OK")
 
 else : 
-    with open("Script_html_check_code_results\\result.txt", 'a') as f:
+    with open("Results\\result.txt", 'a') as f:
         f.write("\nCode retour KO")
